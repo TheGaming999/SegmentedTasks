@@ -32,3 +32,18 @@ Used for tasks that require speed and concurrency (which RegularTask lacks).
 ```java
 SegmentedTasks.scheduleConcurrentTask(Consumer<T> action, Predicate<T> valueEscape, Consumer<T> escapeAction)
 ```
+Example usage:  
+The purpose of this task is kill players gradually by subtracting 0.1 from their health as fast as possible.  
+```java
+// Create the task.
+// Reduce player health
+// IF player health is 0 / they are dead
+// Send death message
+ConcurrentTask<Player> deathTask = SegmentedTasks.scheduleConcurrentTask(player -> player.setHealth(player.getHealth() - 0.1d), player -> player.getHealth() == 0, player -> player.sendMessage("You died"));
+// Start task
+deathTask.init();
+// Use the task
+// Say it is from an event
+deathTask.addValue(() -> event.getPlayer());
+// You can use that a million times and it will never lag the server.
+```
